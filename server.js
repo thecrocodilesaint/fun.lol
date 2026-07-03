@@ -41,6 +41,119 @@ const dashboardThemeOptions = new Set(["black", "violet", "aqua", "ember"]);
 const dashboardCursorModes = new Set(["normal", "dot"]);
 const dashboardCursorColors = new Set(["white", "blue", "pink"]);
 const accountStatusOptions = new Set(["active", "suspended", "banned"]);
+const defaultSeoTitle = "slapz.lol - Custom Bio Pages with Music, Tribes, Games and Slappers";
+const defaultSeoDescription =
+  "Create a custom Gen Z bio profile with music, backgrounds, themes, effects, Slappers, Tribes, chats, games and leaderboards. Build your online vibe on slapz.lol.";
+const defaultOgImagePath = "/assets/slapz-og-image.png";
+const seoPageDefinitions = {
+  "/features": {
+    title: "slapz.lol Features - Bio Pages, Slappers, Tribes, Chats and Games",
+    description:
+      "Explore slapz.lol features including custom bio pages, media backgrounds, profile music, Slappers, Tribes, tribe chats, mini-games and leaderboards.",
+    kicker: "Features",
+    h1: "Everything you need to build your online vibe.",
+    intro:
+      "slapz.lol combines a custom public bio page with friends, Tribes, chats, games, leaderboards, profile effects and a private dashboard for managing it all.",
+    sections: [
+      ["Custom profiles", "Build a public profile with a handle, bio, avatar, social icons, themes, sparkle effects, music and image or video backgrounds."],
+      ["Social features", "Add Slappers, manage friend requests, receive notifications, and show your circle through dashboard widgets."],
+      ["Tribes and games", "Create Tribes, chat with members, browse game cards, play mini-games, and compete on leaderboards."],
+    ],
+    related: ["/custom-bio-pages", "/slappers", "/tribes", "/games"],
+  },
+  "/custom-bio-pages": {
+    title: "Custom Bio Pages on slapz.lol - Music, Backgrounds, Themes and Effects",
+    description:
+      "Create a custom slapz.lol bio page with profile music, avatars, background images or videos, themes, custom cursors, sparkle effects and social links.",
+    kicker: "Custom Bio Pages",
+    h1: "Make a bio page that actually feels like you.",
+    intro:
+      "Your slapz.lol bio page is a shareable public profile built for music, motion, personal style and quick social discovery.",
+    sections: [
+      ["Profile identity", "Edit your display name, handle, bio, location, avatar, featured section, badges and social icons."],
+      ["Media and music", "Upload background images or videos, add background music, and use a clean entry screen before visitors enter your profile."],
+      ["Visual customization", "Choose themes, profile templates, cursor styles, sparkle effects and transparent glass profile cards."],
+    ],
+    related: ["/features", "/slappers", "/about", "/help"],
+  },
+  "/slappers": {
+    title: "Slappers on slapz.lol - Friends, Requests and Notifications",
+    description:
+      "Use Slappers on slapz.lol to add friends, send requests, receive notifications, manage friend lists and stay connected from your dashboard.",
+    kicker: "Slappers",
+    h1: "Add your people and keep your circle close.",
+    intro:
+      "Slappers are the friend layer of slapz.lol, giving users a simple way to send requests, accept connections and see friend activity.",
+    sections: [
+      ["Friend requests", "Search by name, handle or profile link, send requests, and accept or decline them from notifications."],
+      ["Friend widgets", "See friends from the dashboard and keep the list refreshed without reloading the whole site."],
+      ["Controls", "Remove a friend with confirmation and keep social actions tied to signed-in accounts."],
+    ],
+    related: ["/features", "/tribes", "/custom-bio-pages"],
+  },
+  "/tribes": {
+    title: "Tribes on slapz.lol - Communities, Invites, Roles and Tribe Chats",
+    description:
+      "Create and join slapz.lol Tribes, invite Slappers, manage members, approve join requests, customize tribe themes and open tribe chats.",
+    kicker: "Tribes",
+    h1: "Build small communities around your vibe.",
+    intro:
+      "Tribes give friend groups and communities a place to organize, invite members, approve join requests and chat together.",
+    sections: [
+      ["Create and manage", "Tribe owners can create Tribes, rename them, change colors, add members, remove members and delete Tribes."],
+      ["Join requests", "Users can search public Tribes and request to join while owners approve or decline requests."],
+      ["Tribe chats", "Members get access to tribe-scoped chats with message history and timestamps."],
+    ],
+    related: ["/slappers", "/games", "/features"],
+  },
+  "/games": {
+    title: "Games on slapz.lol - Snake, Click Rush, Wordle, Crossy and Leaderboards",
+    description:
+      "Play mini-games on slapz.lol including Snake, Click Rush, Wordle and a Crossy-style game with saved scores, leaderboards and achievements.",
+    kicker: "Games",
+    h1: "Play quick games without leaving your dashboard.",
+    intro:
+      "The slapz.lol games dashboard turns profile building into a social game loop with mini-games, saved scores, achievements and leaderboards.",
+    sections: [
+      ["Mini-games", "Play Snake, Click Rush, Wordle and a Crossy-style game from compact expandable game cards."],
+      ["Scores", "Save scores and compare against global, friend and Tribe leaderboards where available."],
+      ["Challenges", "Use daily challenges and achievements to give users reasons to return."],
+    ],
+    related: ["/features", "/tribes", "/custom-bio-pages"],
+  },
+  "/about": {
+    title: "About slapz.lol - A Custom Profile Platform for Creators and Friend Groups",
+    description:
+      "Learn about slapz.lol, a dark neon profile platform for creators, gamers and friend groups to share bios, music, Tribes, chats and games.",
+    kicker: "About",
+    h1: "A profile platform for people who want more than a link page.",
+    intro:
+      "slapz.lol is built for creators, gamers and friend groups who want a public profile that feels expressive, social and playful.",
+    sections: [
+      ["Why it exists", "Most profile pages feel static. slapz.lol adds music, motion, friends, Tribes, chats and games to make profiles feel alive."],
+      ["Who it is for", "The platform is designed for creators, gamers, social users, friend groups and visitors discovering public profiles."],
+      ["How it works", "Users sign up, customize a Bio, publish a public handle, add Slappers, join Tribes and play games from the dashboard."],
+    ],
+    related: ["/features", "/custom-bio-pages", "/help"],
+  },
+  "/help": {
+    title: "slapz.lol Help - Profiles, Slappers, Tribes, Games and Account Support",
+    description:
+      "Get help with slapz.lol accounts, public profiles, profile music, background uploads, Slappers, Tribes, tribe chats and mini-games.",
+    kicker: "Help",
+    h1: "Get started with your slapz.lol profile.",
+    intro:
+      "This help page explains the main slapz.lol areas so new users can understand the dashboard, publish a profile and use social features safely.",
+    sections: [
+      ["Create a profile", "Sign up, open Bio, add a display name and handle, customize your page, then publish your public profile."],
+      ["Use social features", "Add Slappers from the Tribes area, review notifications, create or join Tribes, and open tribe chats as a member."],
+      ["Account and media tips", "Use reasonable file sizes for uploads, keep your password private, and use forgot password if you need to reset access."],
+    ],
+    related: ["/features", "/about", "/custom-bio-pages"],
+  },
+};
+const seoPagePaths = Object.keys(seoPageDefinitions);
+const noindexAppPaths = new Set(["/dashboard", "/settings", "/admin", "/owner", "/login", "/signup", "/reset-password"]);
 
 function normalizeSiteOrigin(value) {
   try {
@@ -2009,6 +2122,226 @@ function siteOrigin(req) {
   return `${protocol}://${host}`;
 }
 
+function absoluteUrl(req, value = "/") {
+  const raw = String(value || "/");
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `${siteOrigin(req)}${raw.startsWith("/") ? raw : `/${raw}`}`;
+}
+
+function escapeXml(value) {
+  return escapeHtml(value);
+}
+
+function plainText(value) {
+  return String(value || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncateSeoText(value, max = 155) {
+  const text = plainText(value);
+  if (text.length <= max) return text;
+  return `${text.slice(0, max - 1).replace(/\s+\S*$/, "")}...`;
+}
+
+function structuredDataScript(data) {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+function defaultStructuredData(req) {
+  const origin = siteOrigin(req);
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        name: "slapz.lol",
+        url: origin,
+        description: defaultSeoDescription,
+        applicationCategory: "SocialNetworkingApplication",
+        operatingSystem: "Web",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+      },
+      {
+        "@type": "Organization",
+        name: "slapz.lol",
+        url: origin,
+        logo: absoluteUrl(req, "/assets/slapz-mark.svg"),
+        sameAs: [],
+      },
+    ],
+  };
+}
+
+function replaceHeadTag(html, pattern, tag) {
+  if (pattern.test(html)) return html.replace(pattern, tag);
+  return html.replace("</head>", `    ${tag}\n  </head>`);
+}
+
+function applySeoMeta(html, req, meta = {}) {
+  const title = truncateSeoText(meta.title || defaultSeoTitle, 90);
+  const description = truncateSeoText(meta.description || defaultSeoDescription, 180);
+  const canonical = absoluteUrl(req, meta.canonical || "/");
+  const robots = meta.robots || "index,follow";
+  const ogType = meta.ogType || "website";
+  const ogImage = absoluteUrl(req, meta.ogImage || defaultOgImagePath);
+  const structuredData = meta.structuredData || defaultStructuredData(req);
+
+  html = replaceHeadTag(html, /<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`);
+  html = replaceHeadTag(
+    html,
+    /<meta\s+name=["']description["'][\s\S]*?>/i,
+    `<meta name="description" content="${escapeHtml(description)}" />`
+  );
+  html = replaceHeadTag(html, /<meta\s+name=["']robots["'][\s\S]*?>/i, `<meta name="robots" content="${escapeHtml(robots)}" />`);
+  html = replaceHeadTag(html, /<link\s+rel=["']canonical["'][\s\S]*?>/i, `<link rel="canonical" href="${escapeHtml(canonical)}" />`);
+  html = replaceHeadTag(html, /<meta\s+property=["']og:site_name["'][\s\S]*?>/i, `<meta property="og:site_name" content="slapz.lol" />`);
+  html = replaceHeadTag(html, /<meta\s+property=["']og:type["'][\s\S]*?>/i, `<meta property="og:type" content="${escapeHtml(ogType)}" />`);
+  html = replaceHeadTag(html, /<meta\s+property=["']og:title["'][\s\S]*?>/i, `<meta property="og:title" content="${escapeHtml(title)}" />`);
+  html = replaceHeadTag(
+    html,
+    /<meta\s+property=["']og:description["'][\s\S]*?>/i,
+    `<meta property="og:description" content="${escapeHtml(description)}" />`
+  );
+  html = replaceHeadTag(html, /<meta\s+property=["']og:url["'][\s\S]*?>/i, `<meta property="og:url" content="${escapeHtml(canonical)}" />`);
+  html = replaceHeadTag(html, /<meta\s+property=["']og:image["'][\s\S]*?>/i, `<meta property="og:image" content="${escapeHtml(ogImage)}" />`);
+  html = replaceHeadTag(html, /<meta\s+name=["']twitter:card["'][\s\S]*?>/i, `<meta name="twitter:card" content="summary_large_image" />`);
+  html = replaceHeadTag(html, /<meta\s+name=["']twitter:title["'][\s\S]*?>/i, `<meta name="twitter:title" content="${escapeHtml(title)}" />`);
+  html = replaceHeadTag(
+    html,
+    /<meta\s+name=["']twitter:description["'][\s\S]*?>/i,
+    `<meta name="twitter:description" content="${escapeHtml(description)}" />`
+  );
+  html = replaceHeadTag(html, /<meta\s+name=["']twitter:image["'][\s\S]*?>/i, `<meta name="twitter:image" content="${escapeHtml(ogImage)}" />`);
+  html = replaceHeadTag(
+    html,
+    /<script\s+type=["']application\/ld\+json["']\s+id=["']structuredData["'][\s\S]*?<\/script>/i,
+    `<script type="application/ld+json" id="structuredData">${structuredDataScript(structuredData)}</script>`
+  );
+
+  return html;
+}
+
+function sendIndexPage(req, res, meta = {}) {
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  sendText(res, 200, "text/html; charset=utf-8", applySeoMeta(html, req, meta));
+}
+
+function renderSeoPage(req, res, pagePath) {
+  const page = seoPageDefinitions[pagePath];
+  const origin = siteOrigin(req);
+  const pageLinks = ["/", ...seoPagePaths].map((href) => {
+    const label = href === "/" ? "Home" : seoPageDefinitions[href].kicker;
+    return `<a href="${href}">${escapeHtml(label)}</a>`;
+  });
+  const relatedLinks = (page.related || [])
+    .map((href) => `<a href="${href}">${escapeHtml(seoPageDefinitions[href]?.kicker || href)}</a>`)
+    .join("");
+  const sections = page.sections
+    .map(
+      ([heading, body]) => `
+        <article class="seo-card glass">
+          <h2>${escapeHtml(heading)}</h2>
+          <p>${escapeHtml(body)}</p>
+        </article>`
+    )
+    .join("");
+  const html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${escapeHtml(page.title)}</title>
+    <meta name="description" content="${escapeHtml(page.description)}" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="${escapeHtml(`${origin}${pagePath}`)}" />
+    <meta property="og:site_name" content="slapz.lol" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="${escapeHtml(page.title)}" />
+    <meta property="og:description" content="${escapeHtml(page.description)}" />
+    <meta property="og:url" content="${escapeHtml(`${origin}${pagePath}`)}" />
+    <meta property="og:image" content="${escapeHtml(absoluteUrl(req, defaultOgImagePath))}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(page.title)}" />
+    <meta name="twitter:description" content="${escapeHtml(page.description)}" />
+    <meta name="twitter:image" content="${escapeHtml(absoluteUrl(req, defaultOgImagePath))}" />
+    <link rel="icon" type="image/svg+xml" href="/assets/slapz-mark.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="application/ld+json" id="structuredData">${structuredDataScript(defaultStructuredData(req))}</script>
+  </head>
+  <body class="seo-page-body" data-theme="black">
+    <div class="background-image" aria-hidden="true"></div>
+    <div class="backdrop-shade" aria-hidden="true"></div>
+    <main class="seo-page">
+      <nav class="seo-nav glass" aria-label="Public pages">
+        <a class="seo-brand" href="/">slapz.lol</a>
+        <div>${pageLinks.join("")}</div>
+      </nav>
+      <section class="seo-hero glass">
+        <p class="landing-kicker">${escapeHtml(page.kicker)}</p>
+        <h1>${escapeHtml(page.h1)}</h1>
+        <p>${escapeHtml(page.intro)}</p>
+        <div class="seo-hero-actions">
+          <a class="save-button" href="/">Create your profile</a>
+          <a class="preview-button" href="/features">Explore features</a>
+        </div>
+      </section>
+      <section class="seo-card-grid" aria-label="${escapeHtml(page.kicker)} details">${sections}</section>
+      <section class="seo-related glass" aria-label="Related pages">
+        <h2>Keep exploring slapz.lol</h2>
+        <div>${relatedLinks || pageLinks.join("")}</div>
+      </section>
+    </main>
+  </body>
+</html>`;
+  sendText(res, 200, "text/html; charset=utf-8", html);
+}
+
+async function profileSeoMeta(req, handle) {
+  const canonical = absoluteUrl(req, `/u/${handle}`);
+  const profile = await getProfile(handle);
+  if (!profile) {
+    return {
+      title: "Profile not found | slapz.lol",
+      description: "This slapz.lol profile could not be found.",
+      canonical,
+      robots: "noindex,nofollow",
+      ogType: "website",
+    };
+  }
+
+  const privacy = sanitizeProfilePrivacy(profile.profilePrivacy);
+  const access = await canViewProfile(profile, req);
+  if (privacy !== "public" || !access.allowed) {
+    return {
+      title: "Private profile | slapz.lol",
+      description: "This slapz.lol profile is private.",
+      canonical,
+      robots: "noindex,nofollow",
+      ogType: "website",
+    };
+  }
+
+  const publicProfile = publicProfilePayload(profile);
+  const displayName = sanitizeShortText(publicProfile.name || publicProfile.displayName || `@${handle}`, 60);
+  const bio = truncateSeoText(publicProfile.bio || `${displayName} is building a custom Gen Z bio profile on slapz.lol.`, 150);
+  const description = bio || `View ${displayName}'s custom slapz.lol profile with music, themes, Slappers, Tribes and games.`;
+  const hasAvatar = Boolean(publicProfile.avatarPath || publicProfile.avatarData);
+  return {
+    title: `${displayName} (@${handle}) on slapz.lol`,
+    description,
+    canonical,
+    robots: "index,follow",
+    ogType: "profile",
+    ogImage: hasAvatar ? `/api/profiles/${handle}/avatar` : defaultOgImagePath,
+  };
+}
+
 function sendText(res, status, contentType, text) {
   if (!res.hasHeader("Cache-Control") && status >= 400) res.setHeader("Cache-Control", "no-store");
   res.writeHead(status, { "Content-Type": contentType });
@@ -3355,12 +3688,41 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "GET" && seoPageDefinitions[url.pathname]) {
+    renderSeoPage(req, res, url.pathname);
+    return;
+  }
+
+  if (req.method === "GET" && noindexAppPaths.has(url.pathname)) {
+    sendIndexPage(req, res, {
+      title: "Sign in to slapz.lol",
+      description: "Sign in to manage your slapz.lol profile, Slappers, Tribes, chats, games and settings.",
+      canonical: url.pathname,
+      robots: "noindex,nofollow",
+      ogType: "website",
+    });
+    return;
+  }
+
   if (req.method === "GET" && url.pathname === "/robots.txt") {
     sendText(
       res,
       200,
       "text/plain; charset=utf-8",
-      `User-agent: *\nAllow: /\nSitemap: ${siteOrigin(req)}/sitemap.xml\n`
+      [
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /api/",
+        "Disallow: /dashboard",
+        "Disallow: /settings",
+        "Disallow: /admin",
+        "Disallow: /owner",
+        "Disallow: /login",
+        "Disallow: /signup",
+        "Disallow: /reset-password",
+        `Sitemap: ${siteOrigin(req)}/sitemap.xml`,
+        "",
+      ].join("\n")
     );
     return;
   }
@@ -3368,17 +3730,19 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "GET" && url.pathname === "/sitemap.xml") {
     const origin = siteOrigin(req);
     const profiles = await listProfiles();
+    const now = new Date().toISOString();
     const urls = [
-      { loc: origin, lastmod: new Date().toISOString() },
+      { loc: origin, lastmod: now },
+      ...seoPagePaths.map((pagePath) => ({ loc: `${origin}${pagePath}`, lastmod: now })),
       ...profiles
-        .filter((profile) => sanitizeProfilePrivacy(profile.profilePrivacy) === "public")
+        .filter((profile) => sanitizeProfilePrivacy(profile.profilePrivacy) === "public" && sanitizeHandle(profile.handle))
         .map((profile) => ({
           loc: `${origin}/u/${profile.handle}`,
-          lastmod: profile.updatedAt || new Date().toISOString(),
+          lastmod: profile.updatedAt || now,
         })),
     ];
     const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
-      .map((item) => `  <url>\n    <loc>${item.loc}</loc>\n    <lastmod>${item.lastmod}</lastmod>\n  </url>`)
+      .map((item) => `  <url>\n    <loc>${escapeXml(item.loc)}</loc>\n    <lastmod>${escapeXml(item.lastmod)}</lastmod>\n  </url>`)
       .join("\n")}\n</urlset>\n`;
     sendText(res, 200, "application/xml; charset=utf-8", body);
     return;
@@ -3503,8 +3867,18 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === "GET" && (url.pathname.startsWith("/u/") || url.pathname === "/reset-password")) {
-    sendFile(res, path.join(root, "index.html"));
+  if (req.method === "GET" && url.pathname.startsWith("/u/")) {
+    const handle = sanitizeHandle(decodeURIComponent(url.pathname.split("/")[2] || ""));
+    if (!handle) {
+      sendIndexPage(req, res, {
+        title: "Profile not found | slapz.lol",
+        description: "This slapz.lol profile could not be found.",
+        canonical: url.pathname,
+        robots: "noindex,nofollow",
+      });
+      return;
+    }
+    sendIndexPage(req, res, await profileSeoMeta(req, handle));
     return;
   }
 

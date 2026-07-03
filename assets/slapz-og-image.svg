@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">slapz.lol</title>
+  <desc id="desc">slapz.lol custom bio pages with music, Slappers, Tribes and games.</desc>
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="38%" r="70%">
+      <stop offset="0" stop-color="#163949"/>
+      <stop offset="0.45" stop-color="#07090f"/>
+      <stop offset="1" stop-color="#020307"/>
+    </radialGradient>
+    <linearGradient id="cyanStroke" x1="164" x2="415" y1="391" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f7ffff"/>
+      <stop offset="0.18" stop-color="#4ef4ff"/>
+      <stop offset="1" stop-color="#0795e0"/>
+    </linearGradient>
+    <linearGradient id="orangeStroke" x1="420" x2="140" y1="224" y2="496" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff1cf"/>
+      <stop offset="0.2" stop-color="#ff9d32"/>
+      <stop offset="1" stop-color="#ff4e22"/>
+    </linearGradient>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bgGlow)"/>
+  <g opacity="0.24" stroke="#ffffff" stroke-width="1">
+    <path d="M0 126h1200M0 252h1200M0 378h1200M0 504h1200"/>
+    <path d="M150 0v630M300 0v630M450 0v630M600 0v630M750 0v630M900 0v630M1050 0v630"/>
+  </g>
+  <g fill="#fff" opacity="0.7">
+    <circle cx="120" cy="98" r="3"/>
+    <circle cx="1040" cy="116" r="2.5"/>
+    <circle cx="1085" cy="438" r="3"/>
+    <circle cx="566" cy="82" r="2"/>
+    <circle cx="706" cy="526" r="2.5"/>
+    <circle cx="188" cy="528" r="2"/>
+  </g>
+  <g filter="url(#softGlow)">
+    <path d="M410 142c-83-48-242-31-284 68-51 121 242 74 257 166 17 109-150 128-267 60" fill="none" stroke="#071018" stroke-width="96" stroke-linecap="round"/>
+    <path d="M401 143c-84-45-233-26-274 68-34 80 64 104 164 83" fill="none" stroke="url(#cyanStroke)" stroke-width="72" stroke-linecap="round"/>
+    <path d="M255 305c101-18 180 6 151 92-31 96-180 95-288 39" fill="none" stroke="url(#orangeStroke)" stroke-width="72" stroke-linecap="round"/>
+    <path d="M188 176c78-44 168-46 230-10" fill="none" stroke="#f7ffff" stroke-width="14" stroke-linecap="round" opacity="0.92"/>
+    <path d="M410 151h60M390 178h78M96 417h72M110 448h86" fill="none" stroke="#f7ffff" stroke-width="10" stroke-linecap="round" opacity="0.86"/>
+  </g>
+  <text x="486" y="286" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="108" font-weight="900" letter-spacing="-2">slapz.lol</text>
+  <text x="492" y="366" fill="#b9bfce" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">bio pages, music, Tribes and games</text>
+  <text x="492" y="426" fill="#42f0ff" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="900">Build your online vibe.</text>
+</svg>
