@@ -245,6 +245,32 @@ const sanitizeEntryAnimation = (value) => (entryAnimationOptions.has(String(valu
 const sanitizeProfilePrivacy = (value) => (profilePrivacyOptions.has(String(value || "")) ? String(value) : "public");
 
 const badgeOptions = ["Early User", "Verified Profile", "Tribe Owner", "Game Champion", "Top Friend", "Profile Creator"];
+const profileBadgeIconMap = {
+  "Early User": {
+    className: "badge-seal",
+    svg: '<path d="M12 3.2 14.1 6l3.5-.3.6 3.5 2.6 2.3-2.1 2.8.3 3.5-3.5.6-2.3 2.6-2.8-2.1-3.5.3-.6-3.5-2.6-2.3 2.1-2.8-.3-3.5 3.5-.6L12 3.2Z"/><path d="m8.7 12.2 2.1 2.1 4.6-4.9"/>',
+  },
+  "Verified Profile": {
+    className: "badge-gem",
+    svg: '<path d="M5.2 8.1 8.4 4.5h7.2l3.2 3.6L12 20.1 5.2 8.1Z"/><path d="M5.8 8.1h12.4M8.4 4.5 12 20.1l3.6-15.6M8.4 4.5l3.6 3.6 3.6-3.6"/>',
+  },
+  "Tribe Owner": {
+    className: "badge-tribe",
+    svg: '<path d="M7 19V8.2C7 5.9 9 4 11.4 4h1.2C15 4 17 5.9 17 8.2V19"/><path d="M7 11.2 4.8 8.8M17 11.2l2.2-2.4M9.2 7.6h.01M14.8 7.6h.01M9.1 13.4c1.9 1.4 3.9 1.4 5.8 0"/>',
+  },
+  "Game Champion": {
+    className: "badge-champ",
+    svg: '<path d="M12 3.5 19.4 8 12 20.5 4.6 8 12 3.5Z"/><path d="M8.2 8h7.6M12 3.5V20.5M7.2 10.8 12 15.2l4.8-4.4"/>',
+  },
+  "Top Friend": {
+    className: "badge-friend",
+    svg: '<path d="M12 20s-7-4.4-7-10.1C5 7 6.9 5 9.3 5c1.4 0 2.4.7 2.7 1.6C12.3 5.7 13.3 5 14.7 5 17.1 5 19 7 19 9.9 19 15.6 12 20 12 20Z"/><path d="M9 11.5h6"/>',
+  },
+  "Profile Creator": {
+    className: "badge-creator",
+    svg: '<circle cx="12" cy="12" r="8.2"/><path d="M9 15.2 15.2 9l1.4 1.4-6.2 6.2H9v-1.4Z"/><path d="M14.4 9.8 15.2 9l1.4 1.4-.8.8"/>',
+  },
+};
 const dailyChallenges = [
   { title: "Play Wordle today", text: "Finish one Wordle round to keep your brain warm." },
   { title: "Beat 25 in Click Rush", text: "A fast but realistic target for a clean 15 second round." },
@@ -4122,12 +4148,26 @@ function renderProfileBadgeChips(items) {
     return;
   }
   profile.badges.hidden = false;
+
+  const label = document.createElement("span");
+  label.className = "profile-badge-tier";
+  label.textContent = "Premium";
+  profile.badges.append(label);
+
+  const tray = document.createElement("div");
+  tray.className = "profile-badge-tray";
+  tray.setAttribute("role", "list");
   badges.forEach((item) => {
+    const icon = profileBadgeIconMap[item] || profileBadgeIconMap["Early User"];
     const chip = document.createElement("span");
-    chip.className = "mini-chip";
-    chip.textContent = item;
-    profile.badges.append(chip);
+    chip.className = `profile-badge-icon ${icon.className}`;
+    chip.title = item;
+    chip.setAttribute("role", "listitem");
+    chip.setAttribute("aria-label", item);
+    chip.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${icon.svg}</svg>`;
+    tray.append(chip);
   });
+  profile.badges.append(tray);
 }
 
 const achievementList = () => {

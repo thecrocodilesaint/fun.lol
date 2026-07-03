@@ -1829,12 +1829,106 @@ body.sidebar-collapsed .sidebar-status-badge {
   line-height: 1.35;
 }
 
-.mini-chip-list,
-.profile-badges {
+.mini-chip-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
   justify-content: center;
+}
+
+.profile-badges {
+  display: inline-grid;
+  gap: 0.22rem;
+  justify-items: start;
+  justify-self: center;
+  margin-top: -0.2rem;
+}
+
+.profile-badges.is-empty {
+  display: flex;
+  justify-content: center;
+}
+
+.profile-badge-tier {
+  display: inline-flex;
+  min-height: 1.95rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 0.28rem 1.05rem;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.08), transparent 70%),
+    rgba(0, 0, 0, 0.72);
+  font-size: 0.86rem;
+  font-weight: 950;
+  line-height: 1;
+  text-shadow:
+    0 0 0.6rem rgba(255, 255, 255, 0.72),
+    0 0 1rem rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 0 1rem rgba(255, 255, 255, 0.08),
+    inset 0 0 1.1rem rgba(255, 255, 255, 0.045);
+}
+
+.profile-badge-tray {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  padding: 0.45rem 0.62rem;
+  background:
+    radial-gradient(circle at 16% 50%, rgba(255, 255, 255, 0.18), transparent 2.2rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035)),
+    rgba(6, 7, 9, 0.74);
+  box-shadow:
+    0 0 1.2rem rgba(255, 255, 255, 0.12),
+    inset 0 0 1.25rem rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.profile-badge-icon {
+  position: relative;
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.92);
+  filter:
+    drop-shadow(0 0 0.35rem rgba(255, 255, 255, 0.65))
+    drop-shadow(0 0 0.8rem color-mix(in srgb, var(--accent) 18%, transparent));
+}
+
+.profile-badge-icon svg {
+  width: 1.65rem;
+  height: 1.65rem;
+  overflow: visible;
+  fill: currentColor;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 1.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.profile-badge-icon.badge-gem,
+.profile-badge-icon.badge-champ {
+  color: #dfe7f3;
+}
+
+.profile-badge-icon.badge-tribe {
+  color: rgba(0, 0, 0, 0.82);
+  filter: drop-shadow(0 0 0.45rem rgba(255, 255, 255, 0.42));
+}
+
+.profile-badge-icon.badge-creator {
+  border-radius: 50%;
+  color: #f5fbff;
+  background: radial-gradient(circle, rgba(20, 35, 52, 0.84), rgba(8, 11, 18, 0.78));
+  box-shadow:
+    0 0 0 1px rgba(188, 228, 255, 0.55),
+    0 0 0.9rem rgba(117, 190, 255, 0.36);
 }
 
 .mini-chip {
