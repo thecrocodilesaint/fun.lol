@@ -4149,11 +4149,6 @@ function renderProfileBadgeChips(items) {
   }
   profile.badges.hidden = false;
 
-  const label = document.createElement("span");
-  label.className = "profile-badge-tier";
-  label.textContent = "Premium";
-  profile.badges.append(label);
-
   const tray = document.createElement("div");
   tray.className = "profile-badge-tray";
   tray.setAttribute("role", "list");
@@ -4162,6 +4157,8 @@ function renderProfileBadgeChips(items) {
     const chip = document.createElement("span");
     chip.className = `profile-badge-icon ${icon.className}`;
     chip.title = item;
+    chip.dataset.label = item;
+    chip.tabIndex = 0;
     chip.setAttribute("role", "listitem");
     chip.setAttribute("aria-label", item);
     chip.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${icon.svg}</svg>`;

@@ -1837,11 +1837,10 @@ body.sidebar-collapsed .sidebar-status-badge {
 }
 
 .profile-badges {
-  display: inline-grid;
-  gap: 0.22rem;
-  justify-items: start;
+  display: flex;
   justify-self: center;
   margin-top: -0.2rem;
+  justify-content: center;
 }
 
 .profile-badges.is-empty {
@@ -1849,32 +1848,11 @@ body.sidebar-collapsed .sidebar-status-badge {
   justify-content: center;
 }
 
-.profile-badge-tier {
-  display: inline-flex;
-  min-height: 1.95rem;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  padding: 0.28rem 1.05rem;
-  color: var(--text);
-  background:
-    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.08), transparent 70%),
-    rgba(0, 0, 0, 0.72);
-  font-size: 0.86rem;
-  font-weight: 950;
-  line-height: 1;
-  text-shadow:
-    0 0 0.6rem rgba(255, 255, 255, 0.72),
-    0 0 1rem rgba(255, 255, 255, 0.22);
-  box-shadow:
-    0 0 1rem rgba(255, 255, 255, 0.08),
-    inset 0 0 1.1rem rgba(255, 255, 255, 0.045);
-}
-
 .profile-badge-tray {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 0.55rem;
   border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 999px;
@@ -1896,9 +1874,70 @@ body.sidebar-collapsed .sidebar-status-badge {
   height: 2rem;
   place-items: center;
   color: rgba(255, 255, 255, 0.92);
+  outline: none;
   filter:
     drop-shadow(0 0 0.35rem rgba(255, 255, 255, 0.65))
     drop-shadow(0 0 0.8rem color-mix(in srgb, var(--accent) 18%, transparent));
+}
+
+.profile-badge-icon::before,
+.profile-badge-icon::after {
+  position: absolute;
+  left: 50%;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.35rem);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.profile-badge-icon::before {
+  content: attr(data-label);
+  bottom: calc(100% + 0.55rem);
+  width: max-content;
+  max-width: 11rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 0.36rem 0.55rem;
+  color: var(--text);
+  background: rgba(5, 6, 9, 0.93);
+  font-size: 0.72rem;
+  font-weight: 950;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 0 0.65rem rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 1rem rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.profile-badge-icon::after {
+  content: "";
+  bottom: calc(100% + 0.27rem);
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(5, 6, 9, 0.93);
+  transform: translate(-50%, 0.35rem) rotate(45deg);
+}
+
+.profile-badge-icon:hover::before,
+.profile-badge-icon:hover::after,
+.profile-badge-icon:focus-visible::before,
+.profile-badge-icon:focus-visible::after {
+  opacity: 1;
+}
+
+.profile-badge-icon:hover::before,
+.profile-badge-icon:focus-visible::before {
+  transform: translate(-50%, 0);
+}
+
+.profile-badge-icon:hover::after,
+.profile-badge-icon:focus-visible::after {
+  transform: translate(-50%, 0) rotate(45deg);
 }
 
 .profile-badge-icon svg {
