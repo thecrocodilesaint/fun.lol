@@ -380,7 +380,18 @@ async function supabaseRequest(table, { method = "GET", query = "", body, prefer
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `Supabase request failed with ${response.status}`);
+    const error = new Error(text || `Supabase request failed with ${response.status}`);
+    error.status = response.status;
+    try {
+      const parsed = JSON.parse(text);
+      error.code = parsed.code;
+      error.details = parsed.details;
+      error.hint = parsed.hint;
+      error.supabaseMessage = parsed.message;
+    } catch {
+      // Keep the raw message when Supabase does not return JSON.
+    }
+    throw error;
   }
 
   if (response.status === 204) return null;
@@ -406,6 +417,27 @@ async function supabaseStorageRequest(pathname, { method = "GET", body, contentT
   }
 
   return response;
+}
+
+function isSupabaseSchemaCacheError(error) {
+  return error?.code === "PGRST204" || /schema cache/i.test(error?.message || "");
+}
+
+function logAuthDatabaseError(event, req, error, details = {}) {
+  const safeDetails = {
+    ...details,
+    status: error?.status,
+    code: error?.code,
+    message: String(error?.supabaseMessage || error?.message || "").slice(0, 220),
+  };
+  logSecurity(event, req, safeDetails);
+}
+
+function authErrorMessage(error, fallback = "Could not complete authentication. Try again soon.") {
+  if (isSupabaseSchemaCacheError(error)) {
+    return "Signup is temporarily unavailable while the database finishes updating. Please try again soon.";
+  }
+  return fallback;
 }
 
 async function ensureMediaBucket() {
@@ -533,6 +565,7 @@ function publicProfilePayload(profile) {
     friendRequests,
     sentFriendRequests,
     adminNotifications,
+    dismissedNotifications,
     tribes,
     tribeInvites,
     tribeJoinRequests,
@@ -1103,6 +1136,43 @@ function sanitizeAdminMessage(message) {
   return String(message || "").trim().replace(/\s+/g, " ").slice(0, 220);
 }
 
+function notificationIdForNotice(notice) {
+  const explicit = sanitizeShortText(notice?.id, 80);
+  if (explicit) return explicit;
+  const basis = `${notice?.type || "owner"}|${notice?.title || "Owner notice"}|${notice?.message || ""}|${notice?.createdAt || ""}`;
+  let hash = 0;
+  for (let index = 0; index < basis.length; index += 1) {
+    hash = (hash * 31 + basis.charCodeAt(index)) >>> 0;
+  }
+  return `notice-${hash.toString(36)}`;
+}
+
+function sanitizeDismissedNotifications(items) {
+  return cleanIdList(items).map((item) => sanitizeShortText(item, 80)).filter(Boolean).slice(0, 500);
+}
+
+async function clearSafeNotificationsForUser(userId) {
+  const profile = await getProfileByOwner(userId);
+  if (!profile?.handle) return { clearedCount: 0, dismissedNotifications: [], adminNotifications: [] };
+
+  const existing = new Set(sanitizeDismissedNotifications(profile.dismissedNotifications));
+  const clearableIds = (Array.isArray(profile.adminNotifications) ? profile.adminNotifications : [])
+    .map(notificationIdForNotice)
+    .filter(Boolean);
+  const previousCount = existing.size;
+  clearableIds.forEach((id) => existing.add(id));
+
+  profile.dismissedNotifications = sanitizeDismissedNotifications([...existing]);
+  profile.updatedAt = new Date().toISOString();
+  await saveProfile(profile);
+
+  return {
+    clearedCount: Math.max(0, existing.size - previousCount),
+    dismissedNotifications: profile.dismissedNotifications,
+    adminNotifications: Array.isArray(profile.adminNotifications) ? profile.adminNotifications : [],
+  };
+}
+
 async function adminSendNotification(targetUserId, message) {
   const target = await findUserById(targetUserId);
   if (!target) throw new Error("User was not found");
@@ -1640,11 +1710,8 @@ async function createUser(email, passwordHash) {
         id: userId,
         email,
         password_hash: passwordHash,
-        account_status: "active",
-        dashboard_settings: defaultDashboardSettings(),
-        created_at: createdAt,
       },
-      prefer: "return=representation",
+      prefer: "return=minimal",
     });
     return userId;
   }
@@ -1687,6 +1754,35 @@ async function createSession(userId) {
   store.sessions[token] = { userId, createdAt };
   writeUsersFile(store);
   return token;
+}
+
+async function rollbackNewSignupUser(userId) {
+  if (!userId) return;
+
+  if (hasSupabase) {
+    try {
+      await supabaseRequest("app_sessions", {
+        method: "DELETE",
+        query: `?user_id=eq.${encodeURIComponent(userId)}`,
+        prefer: "return=minimal",
+      });
+      await supabaseRequest("app_users", {
+        method: "DELETE",
+        query: `?id=eq.${encodeURIComponent(userId)}`,
+        prefer: "return=minimal",
+      });
+    } catch (error) {
+      console.warn("Could not roll back failed signup user:", error.message);
+    }
+    return;
+  }
+
+  const store = readUsersFile();
+  delete store.users[userId];
+  Object.entries(store.sessions).forEach(([token, session]) => {
+    if (session.userId === userId) delete store.sessions[token];
+  });
+  writeUsersFile(store);
 }
 
 function isSessionExpired(session) {
@@ -2462,10 +2558,13 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === "POST" && url.pathname === "/api/signup") {
+    let createdUserId = "";
+    let signupEmail = "";
     try {
       if (rateLimit(req, res, "signup", rateLimits.auth)) return;
       const body = JSON.parse((await readBody(req)) || "{}");
       const email = cleanEmail(body.email);
+      signupEmail = email;
       const password = String(body.password || "");
       if (!email.includes("@") || password.length < 6) {
         sendJson(res, 400, { error: "Enter a valid email and a password with at least 6 characters" });
@@ -2478,11 +2577,13 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const userId = await createUser(email, hashPassword(password));
-      const token = await createSession(userId);
+      createdUserId = await createUser(email, hashPassword(password));
+      const token = await createSession(createdUserId);
       sendJson(res, 201, { token, email });
     } catch (error) {
-      sendJson(res, 400, { error: error.message });
+      if (createdUserId) await rollbackNewSignupUser(createdUserId);
+      logAuthDatabaseError("signup_failed", req, error, { email: maskEmail(signupEmail) });
+      sendJson(res, 400, { error: authErrorMessage(error, "Could not create your account. Try again soon.") });
     }
     return;
   }
@@ -2613,6 +2714,22 @@ const server = http.createServer(async (req, res) => {
       sendJson(res, 200, { dashboardSettings });
     } catch (error) {
       sendJson(res, 400, { error: error.message });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/notifications/clear") {
+    try {
+      const authed = await getAuthedUser(req);
+      if (!authed) {
+        sendJson(res, 401, { error: "Sign in before clearing notifications" });
+        return;
+      }
+
+      const result = await clearSafeNotificationsForUser(authed.userId);
+      sendJson(res, 200, result);
+    } catch {
+      sendJson(res, 400, { error: "Could not clear notifications" });
     }
     return;
   }
@@ -3843,6 +3960,7 @@ const server = http.createServer(async (req, res) => {
         friendRequests: existingProfile ? existingProfile.friendRequests || [] : [],
         sentFriendRequests: existingProfile ? existingProfile.sentFriendRequests || [] : [],
         adminNotifications: existingProfile ? existingProfile.adminNotifications || [] : [],
+        dismissedNotifications: existingProfile ? existingProfile.dismissedNotifications || [] : [],
         tribes: existingProfile ? existingProfile.tribes || [] : Array.isArray(incoming.tribes) ? incoming.tribes : [],
         tribeInvites: existingProfile ? existingProfile.tribeInvites || [] : [],
         tribeJoinRequests: existingProfile ? existingProfile.tribeJoinRequests || [] : [],

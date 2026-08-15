@@ -1951,23 +1951,38 @@ body.sidebar-collapsed .sidebar-status-badge {
   stroke-linejoin: round;
 }
 
-.profile-badge-icon.badge-gem,
-.profile-badge-icon.badge-champ {
-  color: #dfe7f3;
+.profile-badge-icon.badge-verified {
+  color: #f7fbff;
+  filter:
+    drop-shadow(0 0 0.38rem rgba(255, 255, 255, 0.78))
+    drop-shadow(0 0 0.9rem rgba(255, 255, 255, 0.18));
+}
+
+.profile-badge-icon.badge-early {
+  color: #e9edf5;
 }
 
 .profile-badge-icon.badge-tribe {
-  color: rgba(0, 0, 0, 0.82);
-  filter: drop-shadow(0 0 0.45rem rgba(255, 255, 255, 0.42));
+  color: #f1f4fb;
+}
+
+.profile-badge-icon.badge-champ {
+  color: #fff6d7;
+  filter:
+    drop-shadow(0 0 0.35rem rgba(255, 255, 255, 0.58))
+    drop-shadow(0 0 0.85rem rgba(255, 205, 92, 0.2));
+}
+
+.profile-badge-icon.badge-friend {
+  color: #f2f6ff;
 }
 
 .profile-badge-icon.badge-creator {
   border-radius: 50%;
-  color: #f5fbff;
-  background: radial-gradient(circle, rgba(20, 35, 52, 0.84), rgba(8, 11, 18, 0.78));
-  box-shadow:
-    0 0 0 1px rgba(188, 228, 255, 0.55),
-    0 0 0.9rem rgba(117, 190, 255, 0.36);
+  color: #eaffff;
+  filter:
+    drop-shadow(0 0 0.35rem rgba(255, 255, 255, 0.58))
+    drop-shadow(0 0 0.85rem rgba(66, 240, 255, 0.22));
 }
 
 .mini-chip {
@@ -2057,9 +2072,16 @@ body.sidebar-collapsed .sidebar-status-badge {
 .friends-panel-heading,
 .notifications-heading {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
   justify-content: space-between;
+}
+
+.notifications-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
 .friends-widget-heading p,
@@ -2085,6 +2107,33 @@ body.sidebar-collapsed .sidebar-status-badge {
   font-size: 0.78rem;
   font-weight: 950;
   box-shadow: 0 0 1rem color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.notifications-clear-button {
+  min-height: 1.75rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, rgba(255, 255, 255, 0.14));
+  border-radius: 8px;
+  padding: 0.35rem 0.55rem;
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 12%, rgba(255, 255, 255, 0.055));
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: inset 0 0 1rem rgba(255, 255, 255, 0.035);
+}
+
+.notifications-clear-button:hover,
+.notifications-clear-button:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 68%, rgba(255, 255, 255, 0.2));
+  box-shadow: 0 0 1rem color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.notifications-clear-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
 }
 
 .friend-jump-button {

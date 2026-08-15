@@ -171,6 +171,7 @@ let friends = [];
 let friendRequests = [];
 let sentFriendRequests = [];
 let adminNotifications = [];
+let dismissedNotificationIds = new Set();
 let friendSearchResults = [];
 let friendSuggestions = [];
 let bestFriendHandles = [];
@@ -245,22 +246,23 @@ const sanitizeEntryAnimation = (value) => (entryAnimationOptions.has(String(valu
 const sanitizeProfilePrivacy = (value) => (profilePrivacyOptions.has(String(value || "")) ? String(value) : "public");
 
 const badgeOptions = ["Early User", "Verified Profile", "Tribe Owner", "Game Champion", "Top Friend", "Profile Creator"];
+const profileBadgeDisplayOrder = ["Verified Profile", "Early User", "Tribe Owner", "Game Champion", "Top Friend", "Profile Creator"];
 const profileBadgeIconMap = {
   "Early User": {
-    className: "badge-seal",
-    svg: '<path d="M12 3.2 14.1 6l3.5-.3.6 3.5 2.6 2.3-2.1 2.8.3 3.5-3.5.6-2.3 2.6-2.8-2.1-3.5.3-.6-3.5-2.6-2.3 2.1-2.8-.3-3.5 3.5-.6L12 3.2Z"/><path d="m8.7 12.2 2.1 2.1 4.6-4.9"/>',
+    className: "badge-early",
+    svg: '<path d="M12 3.4 14.4 8l5.1.7-3.7 3.6.9 5.1-4.7-2.4-4.7 2.4.9-5.1-3.7-3.6 5.1-.7L12 3.4Z"/><circle cx="16.8" cy="16.8" r="3.1" fill="none"/><path d="M16.8 15.1v1.9l1.4.8" fill="none"/>',
   },
   "Verified Profile": {
-    className: "badge-gem",
-    svg: '<path d="M5.2 8.1 8.4 4.5h7.2l3.2 3.6L12 20.1 5.2 8.1Z"/><path d="M5.8 8.1h12.4M8.4 4.5 12 20.1l3.6-15.6M8.4 4.5l3.6 3.6 3.6-3.6"/>',
+    className: "badge-verified",
+    svg: '<path d="M12 3.2 14.1 6l3.5-.3.6 3.5 2.6 2.3-2.1 2.8.3 3.5-3.5.6-2.3 2.6-2.8-2.1-3.5.3-.6-3.5-2.6-2.3 2.1-2.8-.3-3.5 3.5-.6L12 3.2Z"/><path d="m8.7 12.2 2.1 2.1 4.6-4.9" fill="none"/>',
   },
   "Tribe Owner": {
     className: "badge-tribe",
-    svg: '<path d="M7 19V8.2C7 5.9 9 4 11.4 4h1.2C15 4 17 5.9 17 8.2V19"/><path d="M7 11.2 4.8 8.8M17 11.2l2.2-2.4M9.2 7.6h.01M14.8 7.6h.01M9.1 13.4c1.9 1.4 3.9 1.4 5.8 0"/>',
+    svg: '<path d="M5 17.8h14l-1.1-9.5-3.4 3-2.5-6-2.5 6-3.4-3L5 17.8Z" fill="none"/><path d="M7.2 20h9.6" fill="none"/><circle cx="12" cy="13.4" r="1.15"/>',
   },
   "Game Champion": {
     className: "badge-champ",
-    svg: '<path d="M12 3.5 19.4 8 12 20.5 4.6 8 12 3.5Z"/><path d="M8.2 8h7.6M12 3.5V20.5M7.2 10.8 12 15.2l4.8-4.4"/>',
+    svg: '<path d="M8 4.8h8v4.4a4 4 0 0 1-8 0V4.8Z" fill="none"/><path d="M8 7H5.5a2.4 2.4 0 0 0 2.5 3M16 7h2.5a2.4 2.4 0 0 1-2.5 3M12 13.2v3.3M9.5 19h5" fill="none"/><path d="m12 7.3.8 1.5 1.7.2-1.2 1.2.3 1.7-1.6-.8-1.6.8.3-1.7L9.5 9l1.7-.2.8-1.5Z"/>',
   },
   "Top Friend": {
     className: "badge-friend",
@@ -268,7 +270,7 @@ const profileBadgeIconMap = {
   },
   "Profile Creator": {
     className: "badge-creator",
-    svg: '<circle cx="12" cy="12" r="8.2"/><path d="M9 15.2 15.2 9l1.4 1.4-6.2 6.2H9v-1.4Z"/><path d="M14.4 9.8 15.2 9l1.4 1.4-.8.8"/>',
+    svg: '<path d="M5.2 18.8c3.1.8 5.8.3 7.2-1.1 1.2-1.2.5-2.9-1-3.1-2-.2-2.4 2.6-5.5 2" fill="none"/><path d="M10.8 14.1 17.5 7.4l2 2-6.7 6.7-2.9.9.9-2.9Z" fill="none"/><path d="M15.8 5.2l.8-1.8.8 1.8 1.8.8-1.8.8-.8 1.8-.8-1.8L14 6l1.8-.8ZM6.7 7.7l.5-1.1.5 1.1 1.1.5-1.1.5-.5 1.1-.5-1.1-1.1-.5 1.1-.5Z"/>',
   },
 };
 const dailyChallenges = [
@@ -2399,11 +2401,22 @@ const sanitizeSentFriendRequests = (items = []) =>
     )
     .slice(0, 40);
 
+function notificationIdForNotice(notice) {
+  const explicit = String(notice?.id || "").trim();
+  if (explicit) return explicit.slice(0, 80);
+  const basis = `${notice?.type || "owner"}|${notice?.title || "Owner notice"}|${notice?.message || ""}|${notice?.createdAt || ""}`;
+  let hash = 0;
+  for (let index = 0; index < basis.length; index += 1) {
+    hash = (hash * 31 + basis.charCodeAt(index)) >>> 0;
+  }
+  return `notice-${hash.toString(36)}`;
+}
+
 const sanitizeAdminNotification = (notice) => {
   const message = String(notice?.message || "").trim().slice(0, 220);
   if (!message) return null;
   return {
-    id: String(notice?.id || makeFriendId()),
+    id: notificationIdForNotice(notice),
     title: String(notice?.title || "Owner notice").trim().slice(0, 48),
     message,
     createdAt: notice?.createdAt || new Date().toISOString(),
@@ -2415,6 +2428,13 @@ const sanitizeAdminNotifications = (items = []) =>
     .map(sanitizeAdminNotification)
     .filter(Boolean)
     .slice(0, 40);
+
+const sanitizeDismissedNotifications = (items = []) =>
+  [...new Set((Array.isArray(items) ? items : []).map((item) => String(item || "").trim()).filter(Boolean))]
+    .map((item) => item.slice(0, 80))
+    .slice(0, 500);
+
+const visibleAdminNotifications = () => adminNotifications.filter((notice) => !dismissedNotificationIds.has(notice.id));
 
 const sanitizeProfileTemplate = (value) => (profileTemplates[String(value || "").toLowerCase()] ? String(value).toLowerCase() : "dark");
 
@@ -2819,6 +2839,52 @@ const createAdminNotificationCard = (notice) => {
   card.append(copy);
   return card;
 };
+
+async function clearNotifications() {
+  const clearable = visibleAdminNotifications();
+  if (!clearable.length) {
+    showToast("No clearable notifications.");
+    return;
+  }
+
+  try {
+    if (!sessionToken) {
+      setDismissedNotifications([...dismissedNotificationIds, ...clearable.map((notice) => notice.id)]);
+      showToast("Notifications cleared");
+      return;
+    }
+
+    const response = await fetch("/api/notifications/clear", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeaders() },
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Could not clear notifications");
+
+    setDismissedNotifications(result.dismissedNotifications || [...dismissedNotificationIds, ...clearable.map((notice) => notice.id)]);
+    if (Array.isArray(result.adminNotifications)) setAdminNotifications(result.adminNotifications);
+    else renderFriendRequests();
+    showToast(result.clearedCount ? "Notifications cleared" : "No clearable notifications.");
+  } catch (error) {
+    showToast(error.message);
+  }
+}
+
+function confirmClearNotifications() {
+  const clearable = visibleAdminNotifications();
+  if (!clearable.length) {
+    showToast("No clearable notifications.");
+    return;
+  }
+
+  openConfirmDialog({
+    eyebrow: "Notifications",
+    title: "Clear all notifications?",
+    message: "This clears normal account notices. Friend and tribe requests stay until you answer them.",
+    confirmText: "Clear All",
+    onConfirm: clearNotifications,
+  });
+}
 
 const createSmallActionButton = (label, className, onClick) => {
   const button = document.createElement("button");
@@ -3607,14 +3673,17 @@ function renderFriends() {
 function renderFriendRequests() {
   const notificationsList = $("#notificationsList");
   const notificationsCount = $("#notificationsCount");
+  const clearNotificationsButton = $("#clearNotificationsButton");
   const requestsList = $("#friendRequestsList");
   const requestsCount = $("#friendRequestsCount");
   const badge = $("#friendRequestTabBadge");
   const incomingTotal = friendRequests.length + tribeInvites.length + tribeJoinRequests.length;
-  const notificationTotal = incomingTotal + adminNotifications.length;
+  const visibleAdminNotices = visibleAdminNotifications();
+  const notificationTotal = incomingTotal + visibleAdminNotices.length;
   const requestCountText = `${incomingTotal} incoming / ${sentFriendRequests.length} sent`;
 
   if (notificationsCount) notificationsCount.textContent = String(notificationTotal);
+  if (clearNotificationsButton) clearNotificationsButton.disabled = visibleAdminNotices.length === 0;
   if (requestsCount) requestsCount.textContent = requestCountText;
   if (badge) {
     badge.hidden = incomingTotal === 0;
@@ -3631,7 +3700,7 @@ function renderFriendRequests() {
     emptyNotifications.textContent = "No notifications yet.";
     notificationsList?.append(emptyNotifications);
   } else {
-    adminNotifications.forEach((notice) => {
+    visibleAdminNotices.forEach((notice) => {
       notificationsList?.append(createAdminNotificationCard(notice));
     });
     friendRequests.forEach((request) => {
@@ -3708,6 +3777,11 @@ function renderFriendRequests() {
 
 function setAdminNotifications(nextNotifications) {
   adminNotifications = sanitizeAdminNotifications(nextNotifications);
+  renderFriendRequests();
+}
+
+function setDismissedNotifications(nextNotifications) {
+  dismissedNotificationIds = new Set(sanitizeDismissedNotifications(nextNotifications));
   renderFriendRequests();
 }
 
@@ -4050,6 +4124,7 @@ async function refreshFriendState() {
     setFriends(data.friends || [], { persist: false });
     setFriendRequests(data.friendRequests || [], { persist: false });
     setSentFriendRequests(data.sentFriendRequests || [], { persist: false });
+    setDismissedNotifications(data.dismissedNotifications || []);
     setAdminNotifications(data.adminNotifications || []);
     setTribeInvites(data.tribeInvites || []);
     setTribeJoinRequests(data.tribeJoinRequests || []);
@@ -4134,7 +4209,7 @@ function renderChipList(container, items, emptyText) {
 
 function renderProfileBadgeChips(items) {
   if (!profile.badges) return;
-  const badges = sanitizeBadges(items);
+  const badges = sanitizeBadges(items).sort((a, b) => profileBadgeDisplayOrder.indexOf(a) - profileBadgeDisplayOrder.indexOf(b));
   profile.badges.textContent = "";
   profile.badges.classList.toggle("is-empty", badges.length === 0);
   if (!badges.length) {
@@ -4571,6 +4646,7 @@ const logoutUser = () => {
   setFriends([], { persist: false });
   setFriendRequests([], { persist: false });
   setSentFriendRequests([], { persist: false });
+  setDismissedNotifications([]);
   setAdminNotifications([]);
   setTribes([]);
   setTribeInvites([]);
@@ -4601,6 +4677,7 @@ $("#friendRemoveConfirm").addEventListener("click", async () => {
 $("#friendRemoveDialog").addEventListener("click", (event) => {
   if (event.target.id === "friendRemoveDialog") closeFriendRemoveDialog();
 });
+$("#clearNotificationsButton")?.addEventListener("click", confirmClearNotifications);
 
 dashboardButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -5737,6 +5814,7 @@ const collectProfile = () => ({
   friends,
   friendRequests,
   sentFriendRequests,
+  dismissedNotifications: [...dismissedNotificationIds],
   socialLinks: collectSocialLinks(),
   avatarData: mediaState.avatarData,
   avatarName: mediaState.avatarName,
@@ -5786,6 +5864,7 @@ const applyProfile = (data) => {
   setFriends(Array.isArray(data.friends) ? data.friends : loadFriendsLocal(), { persist: false });
   setFriendRequests(Array.isArray(data.friendRequests) ? data.friendRequests : loadFriendRequestsLocal(), { persist: false });
   setSentFriendRequests(Array.isArray(data.sentFriendRequests) ? data.sentFriendRequests : loadSentFriendRequestsLocal(), { persist: false });
+  setDismissedNotifications(data.dismissedNotifications || []);
   setAdminNotifications(Array.isArray(data.adminNotifications) ? data.adminNotifications : []);
   setTribeInvites(Array.isArray(data.tribeInvites) ? data.tribeInvites : []);
   setTribeJoinRequests(Array.isArray(data.tribeJoinRequests) ? data.tribeJoinRequests : []);

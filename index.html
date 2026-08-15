@@ -456,7 +456,10 @@
             <section class="notifications-widget glass" aria-label="Notifications widget">
               <div class="notifications-heading">
                 <p>Notifications</p>
-                <span id="notificationsCount">0</span>
+                <div class="notifications-heading-actions">
+                  <button class="notifications-clear-button" id="clearNotificationsButton" type="button">Clear All</button>
+                  <span id="notificationsCount">0</span>
+                </div>
               </div>
               <div class="notifications-list" id="notificationsList" aria-live="polite"></div>
             </section>
